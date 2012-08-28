@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Flask/Werkzeug cookie reader for Wordpress.
+Plugin Name: Flask/Werkzeug session cookie reader for Wordpress.
 Plugin URI: https://github.com/Babbaco/Wordpress-Flask-Werkzeug-session-reader
 Description: A plugin which enables read-only access to Flask/Werkzeug sessions.
 Author: Philip Jacob
