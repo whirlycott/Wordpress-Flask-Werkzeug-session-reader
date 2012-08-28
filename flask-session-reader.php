@@ -10,25 +10,18 @@ Stable tag: 0.0.1
 License: Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 */
 
-/* 
- * CONFIGURATION: 
- *
- * Set this to the same secret key you use inside your Flask/Werkzeug application.
- */
-$key = 'this is my secret key';
-
-/* 
- * The name of the session cookie for Flask.  By default, this is 'session'.  You can adjust it by 
- * changing SESSION_COOKIE_NAME in your Flask config.  See:
- * http://flask.pocoo.org/docs/config/
- */
-$session_name = "session";
-
 /** 
  * Safely read the session and noisily swallow any problems.  This is what you should use to read the Flask/Werkzeug cookie.
  */
-function safe_read() {
+function safe_read() {	
+	$name_options = get_option("flaskreader_sessioncookie_name");
+	$key_options = get_option("flaskreader_secret_key");
+	$key = $key_options['text_string'];
+	$session_name = $name_options['text_string'];
+
+	#var_dump($session_name);
 	if (!$_COOKIE[$session_name]) {
+		#var_dump($_COOKIE[$session_name]);
 		return array();
 	}
 
@@ -55,7 +48,7 @@ function dejsonify($items) {
 }
 
 /*
- * Partial PHP port of 
+ * Faithful PHP port of 
  * https://github.com/mitsuhiko/werkzeug/blob/master/werkzeug/contrib/securecookie.py#L229
  * 
  * Provides read-only access to Flask (Werkzeug) sessions by returning a representation of the session.
@@ -109,4 +102,50 @@ function decode($key, $cookie) {
 	return $items;
 }
 
+// create custom plugin settings menu
+add_action('admin_menu', 'flaskreader_admin_add_page');
+add_action('admin_init', 'register_mysettings');
 
+function flaskreader_admin_add_page() {
+	//create new top-level menu
+	add_options_page('Flask/Werkzeug session reader plugin settings', 'Flask Reader Plugin', 'administrator', 'plugin', 'flaskreader_settings_page');
+}
+
+
+function register_mysettings() {
+	//register our settings
+	register_setting( 'flaskreader-settings-group', 'flaskreader_secret_key' );
+	register_setting( 'flaskreader-settings-group', 'flaskreader_sessioncookie_name' );
+	add_settings_section('plugin_main', 'Main settings', 'plugin_section_text', 'plugin');
+	add_settings_field("flaskreader-secret-key", "Flask secret key", "plugin_setting_key", 'plugin', 'plugin_main');
+	add_settings_field("flaskreader-sessioncookie_name", "Flask session cookie name <em>(optional)</em>", "plugin_setting_cookiename", 'plugin', 'plugin_main');
+}
+
+function plugin_setting_key() {
+	$options = get_option('flaskreader_secret_key');
+	echo "<input id='plugin_text_string' name='flaskreader_secret_key[text_string]' size='40' type='text' value='{$options['text_string']}' />";
+}
+
+function plugin_setting_cookiename() {
+	$options = get_option('flaskreader_sessioncookie_name');
+	echo "<input id='plugin_text_string' name='flaskreader_sessioncookie_name[text_string]' size='40' type='text' value='{$options['text_string']}' />";
+}
+
+function plugin_section_text() {
+	echo ("Standard settings");
+}
+
+function flaskreader_settings_page() {
+?>
+<div class="wrap">
+<h2>Flask/Werkzeug Session Reader Plugin</h2>
+
+<form method="post" action="options.php">
+    <?php settings_fields( 'flaskreader-settings-group' ); ?>
+    <?php do_settings_sections( 'plugin' ); ?>
+    <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+    </form>
+</div>
+
+<?php 
+}
