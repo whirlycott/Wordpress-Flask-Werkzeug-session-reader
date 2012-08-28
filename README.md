@@ -6,7 +6,7 @@ it like a normal Wordpress plugin by putting it in wp-content/plugins/flask-sess
 an admin interface where you will specify you Flask secret key and the name of your session (which is 'session' by default in Flask).
 
 This plugin verifies the HMAC of the session and provides you with read-only access to the contents and ensures that the cookie hasn't 
-been modified with.
+been tampered with.
 
 Currently, Flask uses Werkzeug secure cookies to serialize the data which in turn relies on Pickle. 
 This is a really bad idea as it makes interop (say, with PHP) a complete pain in the neck.  Some also 
