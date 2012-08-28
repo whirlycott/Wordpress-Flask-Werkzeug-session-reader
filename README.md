@@ -2,7 +2,7 @@ Wordpress Flask/Werkzeug secure cookie session reader
 =======================================
 
 A basic Wordpress plugin that allows read-only access to Flask/Werkzeug secure sessions.  Install 
-it like a normal Wordpress plugin by putting it in wp-content/plugins/flask-session-reader.php.  There is 
+it like a normal Wordpress plugin by putting it in wp-content/plugins/flask-session-reader/.  There is 
 an admin interface where you will specify you Flask secret key and the name of your session (which is 'session' by default in Flask).
 
 This plugin verifies the HMAC of the session and provides you with read-only access to the contents and ensures that the cookie hasn't 
